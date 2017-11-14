@@ -28,11 +28,20 @@ public class StringUtilsTest {
     @Test
     public void testMatcherInclude() throws Exception {
 //TODO: Test goes here...
-        String content="abcdefghjklmn";
-        String rs=StringUtils.matcherInclude("bc","kl",content);
-        System.out.println(rs);
-        Assert.assertEquals("bcdefghjkl",rs);
+        String content = "abcdefghjklmn";
+        String rs = StringUtils.matcherInclude("bc", "kl", content);
+        Assert.assertEquals("bcdefghjkl", rs);
     }
 
+    /**
+     * Method: matcherExclude(String prefix, String suffix, String content)
+     */
+    @Test
+    public void testMatcherExclude() throws Exception {
+//TODO: Test goes here...
+        String content = "abcdefghjklmn";
+        String rs = StringUtils.matcherExclude("bc", "kl", content);
+        Assert.assertEquals("defghj", rs);
+    }
 
 } 

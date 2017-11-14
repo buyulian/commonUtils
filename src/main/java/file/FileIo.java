@@ -7,11 +7,11 @@ import java.util.Properties;
  * Created by ljc on 2017/8/18.
  */
 public class FileIo {
-    public static String  readFile(String fileName){
+    public static String  readFile(File file){
         BufferedReader bufferedReader=null;
         StringBuilder sb=new StringBuilder();
         try {
-            FileReader fileReader=new FileReader(fileName);
+            FileReader fileReader=new FileReader(file);
             bufferedReader=new BufferedReader(fileReader);
             String str;
             while ((str=bufferedReader.readLine())!=null){
@@ -28,11 +28,11 @@ public class FileIo {
             return sb.toString();
         }
     }
-    public static Properties readProperties(String fileName){
+    public static Properties readProperties(File file){
         Properties prop = new Properties();
         try{
             //读取属性文件a.properties
-            InputStream in = new BufferedInputStream (new FileInputStream(fileName));
+            InputStream in = new BufferedInputStream (new FileInputStream(file));
             prop.load(in);     ///加载属性列表
             in.close();
         }
@@ -41,11 +41,11 @@ public class FileIo {
         }
         return prop;
     }
-    public static void writeFile(String fileName,String content){
-        createParentDir(fileName);
+    public static void writeFile(File file,String content){
+        createParentDir(file);
         BufferedWriter out=null;
         try {
-            out=new BufferedWriter(new FileWriter(fileName));
+            out=new BufferedWriter(new FileWriter(file));
             out.write(content);
             out.flush();
             out.close();
@@ -54,10 +54,10 @@ public class FileIo {
         }
     }
 
-    public static void createParentDir(String fileName){
-        File file=new File(fileName);
-        if(!file.getParentFile().exists()){
-            file.getParentFile().mkdirs();
+    public static void createParentDir(File file){
+        File parentPath=file.getParentFile();
+        if(parentPath!=null&&!parentPath.exists()){
+            parentPath.mkdirs();
         }
     }
 

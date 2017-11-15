@@ -1,6 +1,6 @@
 package mysql.model;
 
-import util.NameUtils;
+import string.NameUtils;
 
 /**
  * Created by zhangzunqiao on 2017/8/17.

@@ -1,4 +1,4 @@
-package database.mysql.model;
+package mysql.model;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -23,4 +23,23 @@ public class StringUtils {
             }
             return null;
         }
+        public static String messageFormat(String pattern,String... parameter){
+            StringBuilder sb=new StringBuilder();
+            int pc=0;
+            for(int i=0;i<pattern.length()-1;i++){
+                char c=pattern.charAt(i);
+                char cn=pattern.charAt(i+1);
+                if(c=='\\'&&cn=='{'){
+                    sb.append('{');
+                    i++;
+                }else if(c=='{'&&cn=='}'){
+                    sb.append(parameter[pc++]);
+                    i++;
+                }else{
+                    sb.append(c);
+                }
+            }
+            sb.append(pattern.charAt(pattern.length()-1));
+            return sb.toString();
+        }
 }

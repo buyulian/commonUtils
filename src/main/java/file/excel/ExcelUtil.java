@@ -83,7 +83,6 @@ public class ExcelUtil {
 
             int sheetCount = workbook.getNumberOfSheets(); // Sheet的数量
 
-//            Sheet sheet = workbook.getSheetAt(0);   // 遍历第一个Sheet
             rs=new Object[sheetCount][][];
             for(int i=0;i<sheetCount;i++){
                 Sheet sheet=workbook.getSheetAt(i);

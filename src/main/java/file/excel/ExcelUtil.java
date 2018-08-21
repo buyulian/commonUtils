@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 
 public class ExcelUtil {
@@ -70,6 +71,59 @@ public class ExcelUtil {
         return obj;
     }
 
+    public static Object[][] getExcelSheetDate(String file,int sheetIndex){
+        Object[][] rs=null;
+        try {
+            // 同时支持Excel 2003、2007
+            File excelFile = new File(file); // 创建文件对象
+            FileInputStream in = new FileInputStream(excelFile); // 文件流
+            checkExcelVaild(excelFile);
+            Workbook workbook = getWorkbok(in,excelFile);
+            //Workbook workbook = WorkbookFactory.create(is); // 这种方式 Excel2003/2007/2010都是可以处理的
+
+            int sheetCount = workbook.getNumberOfSheets(); // Sheet的数量
+
+            if(sheetIndex>sheetCount){
+                return rs;
+            }
+            Sheet sheet=workbook.getSheetAt(sheetIndex);
+            rs=getSheet(sheet);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    public static Object[][] getSheet(Sheet sheet){
+        int cowCount=sheet.getLastRowNum();
+        Object[][] rs=new Object[cowCount][];
+        for (int i=0;i<cowCount;i++) {
+            Row row=sheet.getRow(i);
+            try {
+                //如果当前行没有数据，跳出循环
+                if(row.getCell(0).toString().equals("")){
+                    return rs;
+                }
+
+                //获取总列数(空格的不计算)
+                int columnTotalNum = row.getPhysicalNumberOfCells();
+
+                rs[i]=new Object[columnTotalNum];
+
+                for(int k=0;k<columnTotalNum;k++){
+                    Cell cell=row.getCell(k);
+                    rs[i][k]=getValue(cell);
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return rs;
+    }
+
+
     public static Object[][][] getExcelData(String file){
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         Object[][][] rs=null;
@@ -86,30 +140,7 @@ public class ExcelUtil {
             rs=new Object[sheetCount][][];
             for(int i=0;i<sheetCount;i++){
                 Sheet sheet=workbook.getSheetAt(i);
-                int cowCount=sheet.getLastRowNum();
-                rs[i]=new Object[cowCount][];
-                for (int j=0;j<cowCount;j++) {
-                    Row row=sheet.getRow(j);
-                    try {
-                        //如果当前行没有数据，跳出循环
-                        if(row.getCell(0).toString().equals("")){
-                            return rs;
-                        }
-
-                        //获取总列数(空格的不计算)
-                        int columnTotalNum = row.getPhysicalNumberOfCells();
-
-                        rs[i][j]=new Object[columnTotalNum];
-
-                        for(int k=0;k<columnTotalNum;k++){
-                            Cell cell=row.getCell(k);
-                            rs[i][j][k]=getValue(cell);
-
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                rs[i]=getSheet(sheet);
             }
 
         } catch (Exception e) {

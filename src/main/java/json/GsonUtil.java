@@ -1,7 +1,9 @@
 package json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -46,5 +48,13 @@ public class GsonUtil {
             linkedList.add(new Gson().fromJson(jsonObject, clazz));
         }
         return linkedList;
+    }
+
+    public static JsonObject toJsonObject(String json){
+        return new JsonParser().parse(json).getAsJsonObject();
+    }
+
+    public static JsonArray toJsonArray(String json){
+        return new JsonParser().parse(json).getAsJsonArray();
     }
 }

@@ -96,7 +96,7 @@ public class ExcelUtil {
     }
 
     public static Object[][] getSheet(Sheet sheet){
-        int cowCount=sheet.getLastRowNum();
+        int cowCount=sheet.getLastRowNum()+1;
         Object[][] rs=new Object[cowCount][];
         for (int i=0;i<cowCount;i++) {
             Row row=sheet.getRow(i);

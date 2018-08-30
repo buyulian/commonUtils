@@ -12,6 +12,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -97,29 +100,43 @@ public class ExcelUtil {
 
     public static Object[][] getSheet(Sheet sheet){
         int cowCount=sheet.getLastRowNum()+1;
-        Object[][] rs=new Object[cowCount][];
+        List<List> listList=new ArrayList<>(cowCount);
         for (int i=0;i<cowCount;i++) {
             Row row=sheet.getRow(i);
+            if(row.getCell(0)==null){
+                break;
+            }
             try {
                 //如果当前行没有数据，跳出循环
                 if(row.getCell(0).toString().equals("")){
-                    return rs;
+                    break;
                 }
 
                 //获取总列数(空格的不计算)
                 int columnTotalNum = row.getPhysicalNumberOfCells();
 
-                rs[i]=new Object[columnTotalNum];
+                List list=new ArrayList(columnTotalNum);
 
                 for(int k=0;k<columnTotalNum;k++){
                     Cell cell=row.getCell(k);
-                    rs[i][k]=getValue(cell);
+                    list.add(getValue(cell));
 
                 }
+                listList.add(list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        int colNum=listList.get(0).size();
+        Object[][] rs=new Object[listList.size()][];
+        for(int i=0;i<listList.size();i++){
+            List list=listList.get(i);
+            rs[i]=new Object[colNum];
+            for(int j=0;j<list.size();j++){
+                rs[i][j]=list.get(j);
+            }
+        }
+
         return rs;
     }
 

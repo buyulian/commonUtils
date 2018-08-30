@@ -3,6 +3,7 @@ package string;
 import file.FileIo;
 
 import java.io.File;
+import java.util.Optional;
 
 public class MysqlUtils {
 
@@ -14,14 +15,19 @@ public class MysqlUtils {
 
             sb.append("INSERT INTO `").append(tableName).append("` (");
             for (int j = 0; j < titles.length; j++) {
-                Object[] b = data[j];
-                sb.append("`").append(titles[j]).append("`,");
+                sb.append("`").append(titles[j]).append("`");
+                if(j!=titles.length-1){
+                    sb.append(",");
+                }
             }
 
             sb.append(" )\n VALUES (");
-            for(int k=0;k<titles.length-1;k++){
-                String s= a[k].toString();
-                sb.append("'").append(s).append("',");
+            for(int k=0;k<titles.length;k++){
+                String s= Optional.ofNullable(a[k]).orElse("").toString();
+                sb.append("'").append(s).append("'");
+                if(k!=titles.length-1){
+                    sb.append(",");
+                }
             }
             sb.append("'2018-08-01 00:00:00');\n\n");
         }

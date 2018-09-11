@@ -9,13 +9,18 @@ public class ReflectionUtil {
      * 获取私有成员变量的值
      *
      */
-    public static Object getValue(Object object, String fieldName)
+    public static Object getFields(Object object, String fieldName)
             throws IllegalAccessException, NoSuchFieldException {
 
-        Field field = object.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true); // 参数值为true，禁止访问控制检查
-
-        return field.get(object);
+        String[] fields=fieldName.split("\\.");
+        Object toObject=object;
+        Field field = object.getClass().getDeclaredField(fields[0]);
+        for(int i=1;i<fields.length;i++){
+            field = toObject.getClass().getDeclaredField(fields[i]);
+            field.setAccessible(true);
+            toObject=field.get(toObject);
+        }
+        return field;
     }
 
     /***

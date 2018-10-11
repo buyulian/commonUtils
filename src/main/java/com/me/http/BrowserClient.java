@@ -6,6 +6,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -33,6 +34,27 @@ public class BrowserClient {
         defaultHeader.put("Host", "ssa.jd.com");
         defaultHeader.put("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36");
 
+    }
+
+    public String doGet(String url,Map<String,String> header) throws Exception {
+        HttpGet httpGet = new HttpGet(url);
+
+        defaultHeader.forEach(httpGet::setHeader);
+
+        header.forEach(httpGet::setHeader);
+
+        CloseableHttpResponse response = httpclient.execute(httpGet);
+        //获取结果实体
+        HttpEntity entity = response.getEntity();
+        String body=null;
+        if (entity != null) {
+            //按指定编码转换结果实体为String类型
+            body = EntityUtils.toString(entity, encoding);
+        }
+        EntityUtils.consume(entity);
+        //释放链接
+        response.close();
+        return body;
     }
 
     public String doPost(String url,List<NameValuePair> pairs,Map<String,String> header) throws Exception {

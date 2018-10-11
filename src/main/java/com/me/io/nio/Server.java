@@ -12,7 +12,4 @@ public class Server {
         serverHandle = new ServerHandle(port);
         new Thread(serverHandle,"Server").start();
     }
-    public static void main(String[] args){
-        start();
-    }
 }

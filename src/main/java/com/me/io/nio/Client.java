@@ -19,7 +19,4 @@ public class Client {
         clientHandle.sendMsg(msg);
         return true;
     }
-    public static void main(String[] args){
-        start();
-    }
 }

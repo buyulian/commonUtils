@@ -19,11 +19,4 @@ public class Client {
         clientHandle.sendMsg(msg);
         return true;
     }
-    @SuppressWarnings("resource")
-    public static void main(String[] args) throws Exception{
-        Client.start();
-        System.out.println("请输入请求消息：");
-        Scanner scanner = new Scanner(System.in);
-        while(Client.sendMsg(scanner.nextLine()));
-    }
 }

@@ -18,7 +18,4 @@ public class Server {
         serverHandle = new AsyncServerHandler(port);
         new Thread(serverHandle,"Server").start();
     }
-    public static void main(String[] args){
-        Server.start();
-    }
 }

@@ -1,6 +1,9 @@
 package com.me.file;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.*;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -69,5 +72,60 @@ public class FileIo {
             }
         }
         return file.delete();
+    }
+
+
+    public static int writeBytes(InputStream inputStream,OutputStream outputStream,byte[] buffer) throws IOException {
+        int sizeAll=0;
+        int bytesRead;
+        int size=buffer.length;
+        while ((bytesRead = inputStream.read(buffer, 0, size)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+            sizeAll+=bytesRead;
+        }
+        return sizeAll;
+    }
+
+    public static void mergeFile(File a,File b,byte[] buffer) throws Exception {
+        FileOutputStream outputStream=new FileOutputStream(a,true);
+        FileInputStream inputStream=new FileInputStream(b);
+        try {
+            writeBytes(inputStream,outputStream,buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            inputStream.close();
+            outputStream.close();
+        }
+    }
+
+    public static Map<String,Object> readYaml(File file) throws Exception {
+        return new Yaml().load(new FileInputStream(file));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Object getObjectFromYamlMap(Map<String,Object> prop,String key){
+        String[] split = key.split("\\.");
+        Object result=prop;
+        Map<String,Object> curProp=null;
+        for (String str:split){
+            curProp= (Map<String, Object>) result;
+            result=curProp.get(str);
+        }
+        return result;
+    }
+
+    public static String getStringFromYamlMap(Map<String,Object> prop,String key){
+        return getObjectFromYamlMap(prop,key).toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String,Object> getMapFromYamlMap(Map<String,Object> prop,String key){
+        return (Map<String, Object>) getObjectFromYamlMap(prop,key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String,String> getStringMapFromYamlMap(Map<String,Object> prop,String key){
+        return (Map<String, String>) getObjectFromYamlMap(prop,key);
     }
 }

@@ -1,8 +1,12 @@
 package com.me.compute;
 
+import sun.plugin2.main.server.WindowsHelper;
+
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,6 +17,31 @@ import java.util.List;
  */
 public class ComputeUtil {
     private static String numberStr="0123456789.";
+
+    private static Map<String,Integer> priorityMap=new HashMap<>();
+
+    static {
+        int priority=1;
+
+        priorityMap.put("&&",priority);
+        priorityMap.put("||",priority);
+        priorityMap.put("^",priority);
+        priority++;
+        priorityMap.put(">",priority);
+        priorityMap.put("<",priority);
+        priorityMap.put(">=",priority);
+        priorityMap.put("<=",priority);
+        priorityMap.put("==",priority);
+        priorityMap.put("!=",priority);
+        priority++;
+        priorityMap.put("+",priority);
+        priorityMap.put("-",priority);
+        priority++;
+        priorityMap.put("*",priority);
+        priorityMap.put("/",priority);
+        priority++;
+        priorityMap.put("!",priority);
+    }
 
     static class MiddleResult{
         BigDecimal data;
@@ -42,27 +71,27 @@ public class ComputeUtil {
                     break;
                 }else if(optStack.size()==0){
                     optStack.push(e);
-                }else if("+".equals(e)||"-".equals(e)){
+                }else{
                     String lastOpt = optStack.pop();
-                    BigDecimal a = numStack.pop();
-                    BigDecimal b = numStack.pop();
-                    BigDecimal c = operation(a,b,lastOpt);
-                    numStack.push(c);
-                    optStack.push(e);
+                    while ("!".equals(lastOpt)){
+                        BigDecimal a = numStack.pop();
+                        numStack.push(a.multiply(BigDecimal.valueOf(-1)));
+                        lastOpt = optStack.pop();
+                    }
+                    Integer ePriority = priorityMap.get(e);
+                    Integer lastOptPriority = priorityMap.get(lastOpt);
 
-                }else if("*".equals(e)||"/".equals(e)){
-                    String lastOpt = optStack.peekLast();
-                    if("*".equals(lastOpt)||"/".equals(lastOpt)){
+                    if(ePriority<=lastOptPriority){
                         BigDecimal a = numStack.pop();
                         BigDecimal b = numStack.pop();
                         BigDecimal c = operation(a,b,lastOpt);
                         numStack.push(c);
-                        optStack.pop();
                         optStack.push(e);
-
                     }else {
+                        optStack.push(lastOpt);
                         optStack.push(e);
                     }
+
                 }
             }else if(word.getType().equals(Word.Type.NUMBER)){
                 numStack.push(new BigDecimal(e));
@@ -111,6 +140,7 @@ public class ComputeUtil {
     }
 
     private static BigDecimal operation(BigDecimal a,BigDecimal b,String opt){
+//        System.out.println(String.format("%s %s %s",b,opt,a));
         if("+".equals(opt)){
             return a.add(b);
         }else if( "-".equals(opt)){
@@ -119,6 +149,31 @@ public class ComputeUtil {
             return a.multiply(b);
         }else if( "/".equals(opt)){
             return b.divide(a,6);
+        }else if( ">".equals(opt)){
+            return b.compareTo(a) > 0 ?BigDecimal.ONE:BigDecimal.ZERO;
+        }else if( "<".equals(opt)){
+            return b.compareTo(a) < 0 ?BigDecimal.ONE:BigDecimal.ZERO;
+        }else if( ">=".equals(opt)){
+            return b.compareTo(a) >= 0 ?BigDecimal.ONE:BigDecimal.ZERO;
+        }else if( "<=".equals(opt)){
+            return b.compareTo(a) <= 0 ?BigDecimal.ONE:BigDecimal.ZERO;
+        }else if( "==".equals(opt)){
+            return b.compareTo(a) == 0 ?BigDecimal.ONE:BigDecimal.ZERO;
+        }else if( "!=".equals(opt)){
+            return b.compareTo(a) != 0 ?BigDecimal.ONE:BigDecimal.ZERO;
+        }else if("^".equals(opt)){
+            return b.compareTo(a) == 0?BigDecimal.ZERO:BigDecimal.ONE;
+        }else if("&&".equals(opt)){
+            return b.compareTo(BigDecimal.ZERO)*b.compareTo(BigDecimal.ZERO) == 0?BigDecimal.ZERO:BigDecimal.ONE;
+        }else if("||".equals(opt)){
+            return b.compareTo(BigDecimal.ZERO)+b.compareTo(BigDecimal.ZERO) == 0?BigDecimal.ZERO:BigDecimal.ONE;
+        }
+        throw new RuntimeException("不支持的运算符");
+    }
+
+    private static BigDecimal operationOne(BigDecimal a,String opt){
+        if("!".equals(opt)){
+            return a.add(BigDecimal.valueOf(-1));
         }
         throw new RuntimeException("不支持的运算符");
     }
@@ -128,10 +183,28 @@ public class ComputeUtil {
         int i=0;
         while (i<expression.length()){
             char c=expression.charAt(i);
-            if(c=='+'||c=='-'||c=='*'||c=='/'||c=='('||c==')'){
+            if(c=='+'||c=='-'||c=='*'||c=='/'||c=='('||c==')'||c=='^'){
                 String w=String.valueOf(c);
                 wordList.add(new Word(w, Word.Type.OPERATOR));
                 i++;
+            }else if(c=='>'||c=='<'||c=='='||c=='!'){
+                char c2=expression.charAt(i+1);
+                if(c2=='='){
+                    String w=String.valueOf(c)+String.valueOf(c2);
+                    wordList.add(new Word(w, Word.Type.OPERATOR));
+                    i+=2;
+                }else {
+                    String w=String.valueOf(c);
+                    wordList.add(new Word(w, Word.Type.OPERATOR));
+                    i++;
+                }
+
+            }else if(c=='&'||c=='|'){
+                char c2=expression.charAt(i+1);
+                String w=String.valueOf(c)+String.valueOf(c2);
+                wordList.add(new Word(w, Word.Type.OPERATOR));
+                i+=2;
+
             }else if(c=='m'){
                 String w=expression.substring(i,i+3);
                 i+=3;

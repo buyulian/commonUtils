@@ -138,7 +138,6 @@ public class ComputeUtil {
     }
 
     private static BigDecimal operation(BigDecimal a,BigDecimal b,String opt){
-        System.out.println(String.format("%s %s %s",b,opt,a));
         a=a.setScale(6,BigDecimal.ROUND_HALF_UP);
         b=b.setScale(6,BigDecimal.ROUND_HALF_UP);
         if("+".equals(opt)){

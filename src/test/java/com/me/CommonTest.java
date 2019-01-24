@@ -21,20 +21,24 @@ public class CommonTest {
 
     @Test
     public void testCompute(){
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3.5==7/2"),new BigDecimal(1)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3==2&&2<=3"),new BigDecimal(0)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3==2&&2<=3"),new BigDecimal(0)));
-        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3==3&&2<=3&&2>=1"),new BigDecimal(1)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3==2||2<=3"),new BigDecimal(1)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3.5==7/2&&2<=3&&2>=1"),new BigDecimal(0)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("1==1"),new BigDecimal(1)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("1!=1"),new BigDecimal(0)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("1<=1"),new BigDecimal(1)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("1<2"),new BigDecimal(1)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3!=3"),new BigDecimal(0)));
-        Assert.assertEquals(ComputeUtil.compute("max(min(2,6),4)"),new BigDecimal(4));
-        Assert.assertEquals(ComputeUtil.compute("(17-5)"),new BigDecimal(12));
-        Assert.assertEquals(ComputeUtil.compute("(3+1)*(7-5)*2-3*5"),new BigDecimal(1));
-        Assert.assertEquals(ComputeUtil.compute("4/(7-5)+2+3*5"),new BigDecimal(19));
-        Assert.assertEquals(ComputeUtil.compute("2+3*5"),new BigDecimal(17));
-        Assert.assertEquals(ComputeUtil.compute("12+103"),new BigDecimal(115));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("max(min(2,6),4)"),new BigDecimal(4)));
+
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("(17-5)"),new BigDecimal(12)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("(3+1)*(7-5)*2-3*5"),new BigDecimal(1)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("4/(7-5)+2+3*5"),new BigDecimal(19)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("2+3*5"),new BigDecimal(17)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("12+103"),new BigDecimal(115)));
+
     }
 
     private static boolean bigDicimalEquals(BigDecimal a,BigDecimal b){

@@ -1,7 +1,5 @@
 package com.me.compute;
 
-import sun.plugin2.main.server.WindowsHelper;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -140,7 +138,9 @@ public class ComputeUtil {
     }
 
     private static BigDecimal operation(BigDecimal a,BigDecimal b,String opt){
-//        System.out.println(String.format("%s %s %s",b,opt,a));
+        System.out.println(String.format("%s %s %s",b,opt,a));
+        a=a.setScale(6,BigDecimal.ROUND_HALF_UP);
+        b=b.setScale(6,BigDecimal.ROUND_HALF_UP);
         if("+".equals(opt)){
             return a.add(b);
         }else if( "-".equals(opt)){
@@ -164,9 +164,9 @@ public class ComputeUtil {
         }else if("^".equals(opt)){
             return b.compareTo(a) == 0?BigDecimal.ZERO:BigDecimal.ONE;
         }else if("&&".equals(opt)){
-            return b.compareTo(BigDecimal.ZERO)*b.compareTo(BigDecimal.ZERO) == 0?BigDecimal.ZERO:BigDecimal.ONE;
+            return b.compareTo(BigDecimal.ZERO)*a.compareTo(BigDecimal.ZERO) == 0?BigDecimal.ZERO:BigDecimal.ONE;
         }else if("||".equals(opt)){
-            return b.compareTo(BigDecimal.ZERO)+b.compareTo(BigDecimal.ZERO) == 0?BigDecimal.ZERO:BigDecimal.ONE;
+            return b.compareTo(BigDecimal.ZERO)+a.compareTo(BigDecimal.ZERO) == 0?BigDecimal.ZERO:BigDecimal.ONE;
         }
         throw new RuntimeException("不支持的运算符");
     }

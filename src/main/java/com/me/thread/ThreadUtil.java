@@ -78,7 +78,8 @@ public class ThreadUtil {
             n++;
             if(n%printLogGap==0){
                 head.getRealTime();
-                writeFile(new File("E:\\thread\\1.txt"), JSON.toJSONString(head));
+                writeFile(new File(String.format("E:\\thread\\%s.txt",n)), JSON.toJSONString(head));
+                head=new TreeNode();
             }
             if(n%1000==0){
                 logger.error(String.valueOf(n));

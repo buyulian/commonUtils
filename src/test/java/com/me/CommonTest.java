@@ -29,6 +29,10 @@ public class CommonTest {
 
     @Test
     public void testCompute(){
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("!(3==2)"),new BigDecimal(1)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("!(3==6/2)"),new BigDecimal(0)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("!1||!!1"),new BigDecimal(1)));
+        Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("!1||!!!1"),new BigDecimal(0)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3.5==7/2"),new BigDecimal(1)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3==2&&2<=3"),new BigDecimal(0)));
         Assert.assertTrue(bigDicimalEquals(ComputeUtil.compute("3==2&&2<=3"),new BigDecimal(0)));

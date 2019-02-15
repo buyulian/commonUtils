@@ -18,6 +18,8 @@ public class ComputeUtil {
 
     private static Map<String,Integer> priorityMap=new HashMap<>();
 
+    private static String NOT_OPT="!";
+
     static {
         int priority=1;
 
@@ -71,23 +73,32 @@ public class ComputeUtil {
                     optStack.push(e);
                 }else{
                     String lastOpt = optStack.pop();
-                    while ("!".equals(lastOpt)){
+                    boolean isBreak=false;
+                    while (NOT_OPT.equals(lastOpt)){
                         BigDecimal a = numStack.pop();
-                        numStack.push(a.multiply(BigDecimal.valueOf(-1)));
+                        numStack.push(operation(a,null,NOT_OPT));
+                        if(optStack.size()==0){
+                            isBreak=true;
+                            break;
+                        }
                         lastOpt = optStack.pop();
                     }
-                    Integer ePriority = priorityMap.get(e);
-                    Integer lastOptPriority = priorityMap.get(lastOpt);
-
-                    if(ePriority<=lastOptPriority){
-                        BigDecimal a = numStack.pop();
-                        BigDecimal b = numStack.pop();
-                        BigDecimal c = operation(a,b,lastOpt);
-                        numStack.push(c);
+                    if(isBreak){
                         optStack.push(e);
                     }else {
-                        optStack.push(lastOpt);
-                        optStack.push(e);
+                        Integer ePriority = priorityMap.get(e);
+                        Integer lastOptPriority = priorityMap.get(lastOpt);
+
+                        if(ePriority<=lastOptPriority){
+                            BigDecimal a = numStack.pop();
+                            BigDecimal b = numStack.pop();
+                            BigDecimal c = operation(a,b,lastOpt);
+                            numStack.push(c);
+                            optStack.push(e);
+                        }else {
+                            optStack.push(lastOpt);
+                            optStack.push(e);
+                        }
                     }
 
                 }
@@ -104,7 +115,10 @@ public class ComputeUtil {
         while (optStack.size()>0){
             String opt = optStack.pop();
             BigDecimal a = numStack.pop();
-            BigDecimal b = numStack.pop();
+            BigDecimal b=null;
+            if(!NOT_OPT.equals(opt)){
+                b = numStack.pop();
+            }
             BigDecimal c = operation(a,b,opt);
             numStack.push(c);
         }
@@ -139,7 +153,11 @@ public class ComputeUtil {
 
     private static BigDecimal operation(BigDecimal a,BigDecimal b,String opt){
         a=a.setScale(6,BigDecimal.ROUND_HALF_UP);
+        if(NOT_OPT.equals(opt)){
+            return BigDecimal.ONE.subtract(a);
+        }
         b=b.setScale(6,BigDecimal.ROUND_HALF_UP);
+
         if("+".equals(opt)){
             return a.add(b);
         }else if( "-".equals(opt)){

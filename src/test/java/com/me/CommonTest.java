@@ -1,9 +1,11 @@
 package com.me;
 
 import com.me.compute.ComputeUtil;
+import com.me.file.FileIo;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 /**
@@ -17,6 +19,12 @@ public class CommonTest {
 
     @Test
     public void testSimple(){
+        String source = "com.jd.clbs.price";
+        String target = "com.jd.clbs.universal.price";
+        File file = new File("E:\\workcode\\clbs\\clbs-universal-price");
+        int n = FileIo.replaceFolderFileContent(file, source, target);
+        System.out.println(n);
+
     }
 
     @Test

@@ -128,4 +128,31 @@ public class FileIo {
     public static Map<String,String> getStringMapFromYamlMap(Map<String,Object> prop,String key){
         return (Map<String, String>) getObjectFromYamlMap(prop,key);
     }
+
+    public static int replaceFolderFileContent(File file,String source,String target){
+        int count=0;
+        if(file.isDirectory()){
+            File[] files = file.listFiles();
+            if(files!=null){
+                for (File file1 : files) {
+                    count+=replaceFolderFileContent(file1,source,target);
+                }
+            }
+        } else {
+            String content = readFile(file);
+            if(content.contains(source)){
+                content=content.replace(source,target);
+                writeFile(file,content);
+                count++;
+            }
+        }
+
+        String name = file.getName();
+        if(name.contains(source)){
+            name=name.replace(source,target);
+            boolean b = file.renameTo(new File(file.getParent()+"/"+name));
+            count++;
+        }
+        return count;
+    }
 }

@@ -1,5 +1,6 @@
 package com.me;
 
+import com.me.code.CodeUtil;
 import com.me.compute.ComputeUtil;
 import com.me.file.FileIo;
 import org.junit.Assert;
@@ -25,6 +26,31 @@ public class CommonTest {
         int n = FileIo.replaceFolderFileContent(file, source, target);
         System.out.println(n);
 
+    }
+
+    @Test
+    public void testAddField(){
+        String filePath="E:\\SellerPriceDao.xml";
+        File file=new File(filePath);
+        String content = FileIo.readFile(file);
+        String contentAfter = CodeUtil.addField(content
+                , new String[]{
+                        "ownerNo",
+                        "owner_no",
+                }
+                , new String[][]{
+                        new String[]{
+                                "targetNo",
+                                "target_no",
+                        },
+                }
+                , new String[]{
+                        "ownerName",
+                        "owner_name",
+        },
+                2);
+        FileIo.writeFile(file,contentAfter);
+        System.out.println(contentAfter);
     }
 
     @Test

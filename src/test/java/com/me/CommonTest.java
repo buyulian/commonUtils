@@ -30,23 +30,23 @@ public class CommonTest {
 
     @Test
     public void testAddField(){
-        String filePath="E:\\SellerPriceDao.xml";
+        String filePath="E:\\workcode\\clbs\\clbs-universal-price\\clbs-universal-price-support\\src\\main\\resources\\mapper\\strategy\\StrategyDao.xml";
         File file=new File(filePath);
         String content = FileIo.readFile(file);
         String contentAfter = CodeUtil.addField(content
                 , new String[]{
-                        "ownerNo",
-                        "owner_no",
+                        "target_no",
+                        "targetNo",
                 }
                 , new String[][]{
                         new String[]{
-                                "targetNo",
-                                "target_no",
+                                "strategy_type",
+                                "strategyType",
                         },
                 }
                 , new String[]{
-                        "ownerName",
-                        "owner_name",
+                        "target_name",
+                        "targetName",
         },
                 2);
         FileIo.writeFile(file,contentAfter);

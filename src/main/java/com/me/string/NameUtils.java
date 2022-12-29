@@ -1,7 +1,7 @@
 package com.me.string;
 
 /**
- * Created by liujiacun on 2017/8/16.
+ * Created by buyulian on 2017/8/16.
  */
 public class NameUtils {
     public static String toClassName(String name){
@@ -9,6 +9,17 @@ public class NameUtils {
         StringBuilder sb=new StringBuilder();
         for(String str:split){
             sb.append(str.substring(0, 1).toUpperCase()).append(str.substring(1));
+        }
+        return sb.toString();
+    }
+    public static String methodNameToSqlName(String name){
+        StringBuilder sb = new StringBuilder();
+        for (Character c : name.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                sb.append("_").append(Character.toLowerCase(c));
+            } else {
+                sb.append(c);
+            }
         }
         return sb.toString();
     }

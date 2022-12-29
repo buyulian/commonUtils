@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class ExcelUtil {
         if(file.getName().endsWith(EXCEL_XLS)){  //Excel 2003
             wb = new HSSFWorkbook(in);
         }else if(file.getName().endsWith(EXCEL_XLSX)){  // Excel 2007/2010
-            wb = new XSSFWorkbook(in);
+            wb = new SXSSFWorkbook(new XSSFWorkbook(in));
         }
         return wb;
     }
@@ -52,6 +53,9 @@ public class ExcelUtil {
 
     private static Object getValue(Cell cell) {
         Object obj = null;
+        if(cell == null) {
+            return obj;
+        }
         switch (cell.getCellTypeEnum()) {
             case BOOLEAN:
                 obj = cell.getBooleanCellValue();
@@ -87,8 +91,8 @@ public class ExcelUtil {
             if(sheetIndex>sheetCount){
                 return rs;
             }
-            Sheet sheet=workbook.getSheetAt(sheetIndex);
-            rs=getSheet(sheet);
+            Sheet sheet = getSheetObject(workbook, sheetIndex);
+            rs= getSheet(sheet);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,6 +103,15 @@ public class ExcelUtil {
     public static Object[][] getSheet(Sheet sheet){
         int cowCount=sheet.getLastRowNum()+1;
         List<List> listList=new ArrayList<>(cowCount);
+        int maxColumnNum = 0;
+        for (int i=0;i<cowCount;i++) {
+            Row row = sheet.getRow(i);
+            //获取总列数(空格的不计算)
+            int columnTotalNum = row.getPhysicalNumberOfCells();
+            if(maxColumnNum < columnTotalNum) {
+                maxColumnNum = columnTotalNum;
+            }
+        }
         for (int i=0;i<cowCount;i++) {
             Row row=sheet.getRow(i);
             if(row.getCell(0)==null){
@@ -110,12 +123,9 @@ public class ExcelUtil {
                     break;
                 }
 
-                //获取总列数(空格的不计算)
-                int columnTotalNum = row.getPhysicalNumberOfCells();
+                List list=new ArrayList(maxColumnNum);
 
-                List list=new ArrayList(columnTotalNum);
-
-                for(int k=0;k<columnTotalNum;k++){
+                for(int k=0;k<maxColumnNum;k++){
                     Cell cell=row.getCell(k);
                     list.add(getValue(cell));
 
@@ -154,14 +164,25 @@ public class ExcelUtil {
 
             rs=new Object[sheetCount][][];
             for(int i=0;i<sheetCount;i++){
-                Sheet sheet=workbook.getSheetAt(i);
-                rs[i]=getSheet(sheet);
+                Sheet sheet = getSheetObject(workbook, i);
+                rs[i]= getSheet(sheet);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return rs;
+    }
+
+    private static Sheet getSheetObject(Workbook workbook, int i) {
+        Sheet sheet;
+        if (workbook instanceof SXSSFWorkbook) {
+            SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
+            sheet = sxssfWorkbook.getXSSFWorkbook().getSheetAt(i);
+        } else {
+            sheet = workbook.getSheetAt(i);
+        }
+        return sheet;
     }
 
 }

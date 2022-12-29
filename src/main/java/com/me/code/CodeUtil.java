@@ -5,21 +5,22 @@ import com.me.string.NameUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
- * @author liujiacun
+ * @author buyulian
  * @date 2019/3/6
  */
 public class CodeUtil {
 
-    public static void addFieldForFile(File file, String[] baseField, String[][] afterFields, String[] addField,int matchNum){
+    public static void addFieldForFile(File file, String[] baseField, String[][] afterFields, String[][] addFields,int matchNum){
         String content = FileIo.readFile(file);
-        content=addField(content,baseField,afterFields,addField,matchNum);
+        content=addField(content,baseField,afterFields,addFields,matchNum);
         FileIo.writeFile(file,content);
     }
 
 
-    public static String addField(String content,String[] baseField,String[][] afterFields,String[] addField,int matchNum){
+    public static String addField(String content,String[] baseField,String[][] afterFields,String[][] addFields,int matchNum){
         StringBuilder sb=new StringBuilder();
         int bi=0;
         int bj=0;
@@ -30,7 +31,7 @@ public class CodeUtil {
             if(status==0){
                 boolean isMatchBaseField = false;
                 for(int j=0;j<matchNum;j++){
-                    isMatchBaseField = content.startsWith(baseField[j], i);
+                    isMatchBaseField = isMatchField(content, i, baseField[j]);
                     if(isMatchBaseField){
                         bi=i;
                         i+=baseField[j].length()-1;
@@ -46,19 +47,40 @@ public class CodeUtil {
             }else {
                 boolean isMatchBaseField;
                 for (String[] afterField : afterFields) {
-                    isMatchBaseField = content.startsWith(afterField[bj], i);
+                    isMatchBaseField = isMatchField(content, i, afterField[bj]);
 
                     if(isMatchBaseField){
                         ei=i;
                         String middleString = content.substring(bi+baseField[bj].length(), ei);
 
+                        String[] beforeTemp = new String[]{"@%&$sd1@","@%&ssdfd1@"};
+                        String[] afterTemp = new String[]{"@%&$S:1@","@%&ss$d1@"};
 
-                        String replaceMiddlerStringFirst = replaceArray(middleString,afterField,addField);
-                        sb.append(replaceMiddlerStringFirst);
-                        sb.append(addField[bj]);
+                        middleString = replaceArray(middleString,baseField,beforeTemp);
+                        middleString = replaceArray(middleString,afterField,afterTemp);
 
-                        String replaceMiddlerStringSecond = replaceArray(middleString,baseField,addField);
+                        String[] curAfters = addFields[0];
+                        String[] curBefores = baseField;
+
+                        for (int i1 = 0; i1 < addFields.length; i1++) {
+                            String[] addField = addFields[i1];
+                            String replaceMiddlerStringFirst = replaceArray(middleString,afterTemp,addField);
+                            replaceMiddlerStringFirst = replaceArray(replaceMiddlerStringFirst,beforeTemp,curBefores);
+                            sb.append(replaceMiddlerStringFirst);
+                            sb.append(addField[bj]);
+
+                            if (i1 == addFields.length - 1) {
+                                curAfters = afterField;
+                            } else {
+                                curAfters = addFields[i1+1];
+                            }
+                            curBefores = addFields[i1];
+                        }
+
+                        String replaceMiddlerStringSecond = replaceArray(middleString,curAfters,afterField);
+                        replaceMiddlerStringSecond = replaceArray(replaceMiddlerStringSecond,beforeTemp,curBefores);
                         sb.append(replaceMiddlerStringSecond);
+
                         i+=afterField[bj].length()-1;
                         sb.append(afterField[bj]);
 
@@ -70,6 +92,31 @@ public class CodeUtil {
             }
         }
         return sb.toString();
+    }
+
+    private static boolean isMatchField(String content, int i, String prefix) {
+        boolean startsWith = content.startsWith(prefix, i);
+
+        if (startsWith) {
+            char c = content.charAt(i - 1);
+            char c1 = content.charAt(i + prefix.length());
+
+            if (beforeAfterMatch(c) && beforeAfterMatch(c1)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean beforeAfterMatch(char c) {
+        boolean b = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || (c == '_');
+        if (b) {
+            return false;
+        }
+        return true;
     }
 
     private static String replaceArray(String str,String[] sources,String[] targets){

@@ -30,8 +30,8 @@ public class BrowserClient {
         defaultHeader.put("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
         defaultHeader.put("Accept-Encoding","gzip,deflate,sdch");
         defaultHeader.put("Accept-Language","zh-CN,zh;q=0.8");
-        defaultHeader.put("Connection","keep-alive");
-        defaultHeader.put("Host", "ssa.jd.com");
+        defaultHeader.put("Connection","close");
+        defaultHeader.put("Host", "ssa.xx.com");
         defaultHeader.put("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36");
 
     }

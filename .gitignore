@@ -9,3 +9,5 @@ out
 *.iml
 lib
 writefile
+target
+*.jpg

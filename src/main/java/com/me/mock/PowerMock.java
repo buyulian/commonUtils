@@ -5,7 +5,7 @@ import sun.security.jca.GetInstance;
 import java.lang.reflect.Proxy;
 
 /**
- * @author liujiacun
+ * @author buyulian
  * @date 2019/3/16
  */
 public class PowerMock {
